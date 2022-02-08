@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
-using System.Net;
-using System.Net.Sockets;
+using System.Net;               //使用於網路通訊協定, IPEndPoint
+using System.Net.Sockets;       //控制網路存取, Socket
 
 namespace Modbus_TCP_pratice
 {
@@ -16,8 +16,8 @@ namespace Modbus_TCP_pratice
     {
         public Socket newclient;
         public bool Connected;
-        public Thread myThread;
-        public delegate void MyInvoke(string str);
+        public Thread myThread;                             //新的執行緒，用於接收伺服器訊息
+        public delegate void MyInvoke(string str);          //要呼叫別的執行緒就必須透過委派
         public delegate void AddListItem();
         public AddListItem myDelegate;
         public Form1()
@@ -114,19 +114,21 @@ namespace Modbus_TCP_pratice
         }
         public void showMsg01(string msg)
         {
+            //判斷這個textbox的物件是否在同一個執行緒上
             if (tbx_receiveMsg01.InvokeRequired)
             {
+                //當InvokeRequired為true時，表示在不同的執行緒上面，所以進行委派動作
                 MyInvoke _myinvoke = new MyInvoke(showMsg01);
                 tbx_receiveMsg01.Invoke(_myinvoke, new object[] { msg });
             }
             else
             {
+                //表示在同一個執行緒上，所以可以正常的呼叫這個TextBox物件
                 tbx_receiveMsg01.AppendText(msg);
             }
         }
         public void showMsg02(string msg)
         {
-            //判斷這個textbox的物件是否在同一個執行緒上
             if (tbx_receiveMsg02.InvokeRequired)
             {
                 MyInvoke _myinvoke = new MyInvoke(showMsg02);
